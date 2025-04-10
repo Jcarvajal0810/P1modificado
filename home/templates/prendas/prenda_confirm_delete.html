@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'prenda-list' %}">Catálogo</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'prenda-detail' prenda.id %}">{{ prenda.nombre }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Eliminar</li>
+        </ol>
+    </nav>
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h2>Confirmar Eliminación</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h4 class="alert-heading">¡Atención!</h4>
+                <p>Estás a punto de eliminar la prenda <strong>"{{ prenda.nombre }}"</strong>.</p>
+                <p>Esta acción no se puede deshacer.</p>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    {% if prenda.imagen %}
+                    <img src="{{ prenda.imagen.url }}" alt="{{ prenda.nombre }}" class="img-fluid">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">Sin imagen</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h4>{{ prenda.nombre }}</h4>
+                    <p><strong>Precio:</strong> ${{ prenda.precio }}</p>
+                    <p><strong>Estado:</strong> {{ prenda.estado }}</p>
+                    <p><strong>Talla:</strong> {{ prenda.talla }}</p>
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+                <a href="{% url 'prenda-detail' prenda.id %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

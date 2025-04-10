@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Prendas Más Populares</h1>
+    <p class="lead">Estas son las prendas que más aparecen en los carritos de nuestros clientes.</p>
+    
+    <div class="row">
+        {% for prenda in prendas %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if prenda.imagen %}
+                <img src="{{ prenda.imagen.url }}" class="card-img-top" alt="{{ prenda.nombre }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <span class="text-muted">Sin imagen</span>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ prenda.nombre }}</h5>
+                    <p class="card-text">Precio: ${{ prenda.precio }}</p>
+                    <p class="card-text">Estado: {{ prenda.estado }}</p>
+                    <p class="card-text">Talla: {{ prenda.talla }}</p>
+                    <p class="card-text"><strong>En {{ prenda.en_carritos }} carritos</strong></p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{% url 'prenda-detail' prenda.id %}" class="btn btn-info btn-sm">Ver Detalles</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'agregar_al_carrito' prenda.id %}" class="btn btn-success btn-sm mt-2 w-100">Añadir al Carrito</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No hay prendas populares para mostrar.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <a href="{% url 'prenda-list' %}" class="btn btn-secondary mt-3">
+        <i class="fas fa-arrow-left"></i> Volver al Catálogo
+    </a>
+</div>
+{% endblock %}
