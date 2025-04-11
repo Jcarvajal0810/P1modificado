@@ -21,14 +21,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from home import class_views
 from home import views_estadisticas
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views  
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('registro/', views.registro, name='registro'),  
     path('login/', views.user_login, name='login'),
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='accounts_login'),
     path('logout/', views.user_logout, name='logout'),
     path('process_registration/', views.process_registration, name='process_registration'),
     path('agregar_al_carrito/<int:prenda_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
@@ -41,7 +41,6 @@ urlpatterns = [
     path('prendas/<int:pk>/eliminar/', class_views.PrendaDeleteView.as_view(), name='prenda-delete'),
     path('prendas/populares/', class_views.PrendasPopularesView.as_view(), name='prendas-populares'),
     path('prendas/estadisticas/', views_estadisticas.estadisticas_prendas, name='prendas-estadisticas'),
-    
-]
+    ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

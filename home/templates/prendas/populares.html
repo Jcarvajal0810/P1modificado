@@ -1,47 +1,138 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1>Prendas Más Populares</h1>
-    <p class="lead">Estas son las prendas que más aparecen en los carritos de nuestros clientes.</p>
+{% block title %}Prendas Populares - Flipit!{% endblock %}
+
+{% block extra_css %}
+<style>
+    .popular-badge {
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: var(--box-shadow);
+        z-index: 10;
+    }
     
+    .popular-card {
+        overflow: visible;
+    }
+    
+    .popular-card .card-img-top {
+        height: 250px;
+        transition: var(--transition);
+    }
+    
+    .popular-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .rating {
+        color: #ffc107;
+    }
+    
+    .banner {
+        background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: var(--box-shadow);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4"><i class="fas fa-fire me-2 text-primary"></i>Prendas Más Populares</h1>
+    
+    <!-- Banner promocional -->
+    <div class="banner mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-3">¡Las favoritas de nuestros clientes!</h2>
+                <p class="lead mb-0">Descubre las prendas que están arrasando en nuestra tienda. Calidad, estilo y los mejores precios.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-crown fa-5x"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de prendas populares -->
     <div class="row">
         {% for prenda in prendas %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                {% if prenda.imagen %}
-                <img src="{{ prenda.imagen.url }}" class="card-img-top" alt="{{ prenda.nombre }}" style="height: 200px; object-fit: cover;">
-                {% else %}
-                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <span class="text-muted">Sin imagen</span>
+        <div class="col-lg-4 col-md-6 mb-5">
+            <div class="card h-100 popular-card">
+                <div class="position-relative">
+                    <div class="popular-badge">
+                        #{{ forloop.counter }}
+                    </div>
+                    {% if prenda.imagen %}
+                    <img src="{{ prenda.imagen.url }}" class="card-img-top" alt="{{ prenda.nombre }}">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-tshirt fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <span class="badge bg-danger rounded-pill px-3 py-2">
+                            <i class="fas fa-shopping-cart me-1"></i>{{ prenda.en_carritos }}
+                        </span>
+                    </div>
                 </div>
-                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ prenda.nombre }}</h5>
-                    <p class="card-text">Precio: ${{ prenda.precio }}</p>
-                    <p class="card-text">Estado: {{ prenda.estado }}</p>
-                    <p class="card-text">Talla: {{ prenda.talla }}</p>
-                    <p class="card-text"><strong>En {{ prenda.en_carritos }} carritos</strong></p>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-light text-dark">{{ prenda.estado }}</span>
+                        <span class="badge bg-light text-dark">{{ prenda.talla }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="rating">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star"></i>
+                            {% endfor %}
+                            <span class="text-muted ms-1">({{ forloop.counter|add:10 }})</span>
+                        </div>
+                        <span class="text-primary fw-bold fs-4">${{ prenda.precio }}</span>
+                    </div>
+                    <p class="card-text text-muted">Esta prenda está en {{ prenda.en_carritos }} carritos de compra.</p>
                 </div>
                 <div class="card-footer bg-white">
-                    <a href="{% url 'prenda-detail' prenda.id %}" class="btn btn-info btn-sm">Ver Detalles</a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'agregar_al_carrito' prenda.id %}" class="btn btn-success btn-sm mt-2 w-100">Añadir al Carrito</a>
-                    {% endif %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'prenda-detail' prenda.id %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>Ver Detalles
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'agregar_al_carrito' prenda.id %}" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>Añadir al Carrito
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
             <div class="alert alert-info">
-                No hay prendas populares para mostrar.
+                <i class="fas fa-info-circle me-2"></i>No hay prendas populares para mostrar.
             </div>
         </div>
         {% endfor %}
     </div>
     
-    <a href="{% url 'prenda-list' %}" class="btn btn-secondary mt-3">
-        <i class="fas fa-arrow-left"></i> Volver al Catálogo
-    </a>
+    <div class="text-center mt-4">
+        <a href="{% url 'prenda-list' %}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Catálogo
+        </a>
+    </div>
 </div>
 {% endblock %}
